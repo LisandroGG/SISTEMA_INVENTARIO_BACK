@@ -8,6 +8,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import cors from "cors";
 import type { RequestHandler } from "express";
+import { mainRouter } from "./src/routes/index";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -61,6 +62,8 @@ app.use(
 		credentials: true,
 	}),
 );
+
+app.use("/", mainRouter);
 
 app.use(express.json());
 
