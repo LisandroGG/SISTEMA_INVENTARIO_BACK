@@ -18,15 +18,3 @@ export const sequelize = new Sequelize({
 	storage: storagePath,
 	logging: false,
 });
-
-(async () => {
-	try {
-		await sequelize.authenticate();
-		console.log("DB CONNECTED");
-		console.log("SYNC MODELS");
-		await sequelize.sync({ alter: false });
-		console.log("MODELTS CONNECTED");
-	} catch (error) {
-		console.log("DB CONNECT ERROR:", error);
-	}
-})();
