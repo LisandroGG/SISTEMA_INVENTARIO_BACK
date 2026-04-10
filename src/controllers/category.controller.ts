@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
 import { messages } from "../helpers/messages.js";
+import { validateDuplicate } from "../helpers/validateExists.js";
 import { Category } from "../models/category.js";
 
 export const getAllCategories = async (_req: Request, res: Response) => {
@@ -28,6 +29,14 @@ export const getCategoryById = async (req: Request, res: Response) => {
 export const createCategory = async (req: Request, res: Response) => {
 	const { name, description } = req.body;
 	try {
+		const isDuplicate = await validateDuplicate(
+			Category,
+			"name",
+			name,
+			res,
+			messages.category.duplicateName,
+		);
+		if (isDuplicate) return;
 		const category = await Category.create({ name, description });
 		res.status(201).json({
 			category,
@@ -42,6 +51,14 @@ export const updateCategory = async (req: Request, res: Response) => {
 	const { id } = req.params;
 	const { name, description } = req.body;
 	try {
+		const isDuplicate = await validateDuplicate(
+			Category,
+			"name",
+			name,
+			res,
+			messages.category.duplicateName,
+		);
+		if (isDuplicate) return;
 		const category = await Category.findByPk(Number(id));
 		if (category) {
 			await category.update({ name, description });

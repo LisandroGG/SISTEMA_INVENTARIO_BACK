@@ -6,7 +6,7 @@ import {
 	getCategoryById,
 	updateCategory,
 } from "../controllers/category.controller.js";
-import { validateCategoryBody } from "../middlewares/category.middlewares.js";
+import { validateCategoryBody } from "../middlewares/category.middleware.js";
 
 export const categoryRouter = Router();
 
