@@ -63,9 +63,9 @@ app.use(
 	}),
 );
 
-app.use("/", mainRouter);
-
 app.use(express.json());
+
+app.use("/", mainRouter);
 
 app.get("/health", (_req: Request, res: Response) => {
 	res.status(200).json({ status: "ok" });
