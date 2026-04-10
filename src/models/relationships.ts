@@ -10,7 +10,11 @@ Category.hasMany(Product, { foreignKey: "categoryId", as: "products" });
 Product.belongsTo(Category, { foreignKey: "categoryId", as: "category" });
 
 // Product -> Stock
-Product.hasOne(Stock, { foreignKey: "productId", as: "stock" });
+Product.hasOne(Stock, {
+	foreignKey: "productId",
+	as: "stock",
+	onDelete: "CASCADE",
+});
 Stock.belongsTo(Product, { foreignKey: "productId", as: "product" });
 
 // Product -> StockMovement

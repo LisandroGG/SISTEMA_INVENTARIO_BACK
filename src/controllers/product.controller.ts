@@ -8,6 +8,7 @@ import {
 } from "../helpers/validateExists.js";
 import { Category } from "../models/category.js";
 import { Product } from "../models/product.js";
+import { Stock } from "../models/stock.js";
 
 export const getAllProducts = async (req: Request, res: Response) => {
 	try {
@@ -34,7 +35,10 @@ export const getAllProducts = async (req: Request, res: Response) => {
 			where: whereConditions,
 			limit,
 			offset,
-			include: [{ model: Category, as: "category" }],
+			include: [
+				{ model: Category, as: "category" },
+				{ model: Stock, as: "stock" },
+			],
 		});
 		res.status(200).json(buildPagedResponse(rows, total, page, limit));
 	} catch (_error) {
@@ -47,7 +51,10 @@ export const getProductById = async (req: Request, res: Response) => {
 	const { id } = req.params;
 	try {
 		const product = await Product.findByPk(Number(id), {
-			include: [{ model: Category, as: "category" }],
+			include: [
+				{ model: Category, as: "category" },
+				{ model: Stock, as: "stock" },
+			],
 		});
 		if (!product) {
 			return res.status(404).json({ message: messages.product.notFound });
@@ -59,7 +66,7 @@ export const getProductById = async (req: Request, res: Response) => {
 };
 
 export const createProduct = async (req: Request, res: Response) => {
-	const { name, price, description, img, categoryId } = req.body;
+	const { name, price, description, img, categoryId, quantity } = req.body;
 	try {
 		const isDuplicate = await validateDuplicate(
 			Product,
@@ -82,6 +89,10 @@ export const createProduct = async (req: Request, res: Response) => {
 			description,
 			img,
 			categoryId,
+		});
+		await Stock.create({
+			productId: product.getDataValue("id"),
+			quantity: quantity ?? 0,
 		});
 		res.status(201).json({
 			product,

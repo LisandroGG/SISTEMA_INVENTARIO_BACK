@@ -20,6 +20,8 @@ export const messages = {
 		invalidPrice: "El precio debe ser un número mayor a 0.",
 		categoryIdRequired: "El ID de la categoria es requerido.",
 		categoryNotFound: "Categoria no encontrada.",
+		quantityRequired:
+			"La cantidad es requerida y debe ser un número mayor o igual a 0.",
 		createSuccess: "Producto creado exitosamente.",
 		updateSuccess: "Producto actualizado exitosamente.",
 		deleteSuccess: "Producto eliminado exitosamente.",

@@ -6,7 +6,7 @@ export const validateProductBody = (
 	res: Response,
 	next: NextFunction,
 ) => {
-	const { name, price, categoryId } = req.body;
+	const { name, price, categoryId, quantity } = req.body;
 	if (name === undefined) {
 		return res.status(400).json({ message: messages.product.nameRequired });
 	}
@@ -23,6 +23,10 @@ export const validateProductBody = (
 		return res
 			.status(400)
 			.json({ message: messages.product.categoryIdRequired });
+	}
+
+	if (quantity === undefined || typeof quantity !== "number" || quantity < 0) {
+		return res.status(400).json({ message: messages.product.quantityRequired });
 	}
 
 	next();
