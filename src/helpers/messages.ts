@@ -59,4 +59,15 @@ export const messages = {
 		quantityRequired:
 			"La cantidad es requerida para cada item y debe ser un número mayor a 0.",
 	},
+	notification: {
+		notFound: "Notificación no encontrada.",
+		markAsReadSuccess: "Notificación marcada como leída exitosamente.",
+		markAllAsReadSuccess:
+			"Todas las notificaciones marcadas como leídas exitosamente.",
+		getError: "Error al obtener notificaciones.",
+		markAsReadError: "Error al marcar notificación como leída.",
+		markAllAsReadError: "Error al marcar todas las notificaciones como leídas.",
+		deleteSuccess: "Notificación eliminada exitosamente.",
+		deleteError: "Error al eliminar notificación.",
+	},
 };

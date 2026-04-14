@@ -42,7 +42,6 @@ export const getAllProducts = async (req: Request, res: Response) => {
 		});
 		res.status(200).json(buildPagedResponse(rows, total, page, limit));
 	} catch (_error) {
-		console.log(_error);
 		res.status(500).json({ message: messages.product.getError });
 	}
 };
