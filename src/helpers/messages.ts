@@ -30,4 +30,19 @@ export const messages = {
 		updateError: "Error al actualizar producto.",
 		deleteError: "Error al eliminar producto.",
 	},
+	stock: {
+		notFound: "Stock no encontrado.",
+		productIdRequired: "El ID del producto es requerido.",
+		productNotFound: "Producto no encontrado.",
+		quantityRequired:
+			"La cantidad es requerida y debe ser un número mayor o igual a 0.",
+		reasonRequired: "La razón del ajuste es requerida.",
+		minQuantityRequired:
+			"La cantidad mínima es requerida y debe ser un número mayor a 0.",
+		adjustSuccess: "Stock ajustado exitosamente.",
+		updateMinSuccess: "Stock minimo actualizado exitosamente.",
+		getError: "Error al obtener stocks.",
+		adjustError: "Error al ajustar stock.",
+		updateMinError: "Error al actualizar stock minimo.",
+	},
 };
