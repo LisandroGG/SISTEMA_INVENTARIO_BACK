@@ -63,7 +63,7 @@ export const adjustStock = async (req: Request, res: Response) => {
 		if (quantity <= stock.getDataValue("minQuantity")) {
 			await Notification.create({
 				type: "low_stock",
-				message: `Stock bajo para el producto ${stock.getDataValue("product").name}. Cantidad actual: ${quantity}.`,
+				message: `Stock bajo para el producto ${stock.getDataValue("product").id}.`,
 				referenceId: stock.getDataValue("productId"),
 				referenceType: "stock",
 			});

@@ -1,0 +1,181 @@
+import type { Request, Response } from "express";
+import { Op } from "sequelize";
+import { messages } from "../helpers/messages.js";
+import { buildPagedResponse, getPagination } from "../helpers/pagination.js";
+import { validateExists } from "../helpers/validateExists.js";
+import { Notification } from "../models/notification.js";
+import { Product } from "../models/product.js";
+import { Sale } from "../models/sale.js";
+import { SaleItem } from "../models/saleItem.js";
+import { Stock } from "../models/stock.js";
+import { StockMovement } from "../models/stockMovement.js";
+
+export const getAllSales = async (req: Request, res: Response) => {
+	try {
+		const { status } = req.query;
+		const { page, limit, offset } = getPagination(req.query, 9);
+
+		const conditions: Record<string, unknown>[] = [];
+
+		if (status) {
+			conditions.push({
+				status: { [Op.like]: `%${status}%` },
+			});
+		}
+		const whereConditions =
+			conditions.length > 0 ? { [Op.and]: conditions } : {};
+
+		const { count: total, rows } = await Sale.findAndCountAll({
+			where: whereConditions,
+			limit,
+			offset,
+			include: [
+				{
+					model: SaleItem,
+					as: "items",
+					include: [{ model: Product, as: "product" }],
+				},
+			],
+		});
+		res.status(200).json(buildPagedResponse(rows, total, page, limit));
+	} catch (_error) {
+		res.status(500).json({ message: messages.sale.getError });
+	}
+};
+
+export const getSaleById = async (req: Request, res: Response) => {
+	try {
+		const { id } = req.params;
+		const sale = await Sale.findByPk(Number(id), {
+			include: [
+				{
+					model: SaleItem,
+					as: "items",
+					include: [{ model: Product, as: "product" }],
+				},
+			],
+		});
+		if (!sale) {
+			return res.status(404).json({ message: messages.sale.notFound });
+		}
+		res.status(200).json(sale);
+	} catch (_error) {
+		res.status(500).json({ message: messages.sale.getError });
+	}
+};
+export const createSale = async (req: Request, res: Response) => {
+	const { items } = req.body;
+	try {
+		let total = 0;
+		const saleItems = [];
+
+		for (const item of items) {
+			const product = await validateExists(
+				Product,
+				Number(item.productId),
+				res,
+				messages.product.notFound,
+			);
+			if (!product) return;
+
+			const stock = await Stock.findOne({
+				where: { productId: item.productId },
+			});
+			if (!stock || stock.getDataValue("quantity") < item.quantity) {
+				return res
+					.status(400)
+					.json({ message: messages.sale.insufficientStock });
+			}
+
+			const unitPrice = product.getDataValue("price");
+			total += unitPrice * item.quantity;
+			saleItems.push({ ...item, unitPrice });
+		}
+
+		const sale = await Sale.create({ total, status: "completed" });
+		const saleId = sale.getDataValue("id");
+
+		for (const item of saleItems) {
+			await SaleItem.create({
+				saleId,
+				productId: item.productId,
+				quantity: item.quantity,
+				unitPrice: item.unitPrice,
+			});
+
+			const stock = await Stock.findOne({
+				where: { productId: item.productId },
+			});
+			const currentQuantity = stock?.getDataValue("quantity");
+			const newQuantity = currentQuantity - item.quantity;
+
+			await stock?.update({ quantity: newQuantity });
+
+			await StockMovement.create({
+				productId: item.productId,
+				saleId,
+				type: "OUT",
+				quantity: item.quantity,
+				reason: "Venta",
+			});
+
+			if (newQuantity <= stock?.getDataValue("minQuantity")) {
+				await Notification.create({
+					type: "low_stock",
+					message: `Stock bajo para el producto ${item.productId}.`,
+					referenceId: item.productId,
+					referenceType: "stock",
+				});
+			}
+		}
+
+		res
+			.status(201)
+			.json({ saleId, total, message: messages.sale.createSuccess });
+	} catch (_error) {
+		console.log(_error);
+		res.status(500).json({ message: messages.sale.createError });
+	}
+};
+
+export const cancelSale = async (req: Request, res: Response) => {
+	const { id } = req.params;
+	try {
+		const sale = await Sale.findByPk(Number(id), {
+			include: [{ model: SaleItem, as: "items" }],
+		});
+
+		if (!sale) {
+			return res.status(404).json({ message: messages.sale.notFound });
+		}
+
+		if (sale.getDataValue("status") === "cancelled") {
+			return res.status(400).json({ message: messages.sale.alreadyCancelled });
+		}
+
+		const items = sale.getDataValue("items");
+
+		for (const item of items) {
+			const stock = await Stock.findOne({
+				where: { productId: item.productId },
+			});
+			const currentQuantity = stock?.getDataValue("quantity");
+
+			await stock?.update({ quantity: currentQuantity + item.quantity });
+
+			await StockMovement.create({
+				productId: item.productId,
+				saleId: Number(id),
+				type: "IN",
+				quantity: item.quantity,
+				reason: "Sale cancelled",
+			});
+		}
+
+		await sale.update({ status: "cancelled" });
+
+		res.json({ message: messages.sale.cancelSuccess });
+	} catch (_error) {
+		res.status(500).json({ message: messages.sale.cancelError });
+	}
+};

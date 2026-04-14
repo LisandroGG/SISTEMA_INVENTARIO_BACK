@@ -45,4 +45,18 @@ export const messages = {
 		adjustError: "Error al ajustar stock.",
 		updateMinError: "Error al actualizar stock minimo.",
 	},
+	sale: {
+		notFound: "Venta no encontrada.",
+		alreadyCancelled: "La venta ya está cancelada.",
+		cancelSuccess: "Venta cancelada exitosamente.",
+		cancelError: "Error al cancelar venta.",
+		insufficientStock: "Stock insuficiente para uno o más productos.",
+		createSuccess: "Venta creada exitosamente.",
+		createError: "Error al crear venta.",
+		getError: "Error al obtener ventas.",
+		itemsRequired: "La venta debe contener al menos un producto.",
+		productIdRequired: "El ID del producto es requerido para cada item.",
+		quantityRequired:
+			"La cantidad es requerida para cada item y debe ser un número mayor a 0.",
+	},
 };
