@@ -6,17 +6,17 @@ export const validateProductBody = (
 	res: Response,
 	next: NextFunction,
 ) => {
-	const { name, price, categoryId, quantity } = req.body;
+	const { name, categoryId } = req.body;
+	const price = Number(req.body.price);
+	const quantity = Number(req.body.quantity);
+
 	if (name === undefined) {
 		return res.status(400).json({ message: messages.product.nameRequired });
 	}
 	if (!name || typeof name !== "string") {
 		return res.status(400).json({ message: messages.product.invalidName });
 	}
-	if (price === undefined) {
-		return res.status(400).json({ message: messages.product.priceRequired });
-	}
-	if (!price || typeof price !== "number" || price <= 0) {
+	if (!price || Number.isNaN(price) || price <= 0) {
 		return res.status(400).json({ message: messages.product.invalidPrice });
 	}
 	if (categoryId === undefined) {
@@ -25,7 +25,7 @@ export const validateProductBody = (
 			.json({ message: messages.product.categoryIdRequired });
 	}
 
-	if (quantity === undefined || typeof quantity !== "number" || quantity < 0) {
+	if (Number.isNaN(quantity) || quantity < 0) {
 		return res.status(400).json({ message: messages.product.quantityRequired });
 	}
 

@@ -7,11 +7,22 @@ import {
 	updateProduct,
 } from "../controllers/product.controller.js";
 import { validateProductBody } from "../middlewares/product.middlewares.js";
+import { upload } from "../middlewares/upload.middleware.js";
 
 export const productRouter = Router();
 
 productRouter.get("/", getAllProducts);
 productRouter.get("/:id", getProductById);
-productRouter.post("/", validateProductBody, createProduct);
-productRouter.put("/:id", validateProductBody, updateProduct);
+productRouter.post(
+	"/",
+	upload.single("img"),
+	validateProductBody,
+	createProduct,
+);
+productRouter.put(
+	"/:id",
+	upload.single("img"),
+	validateProductBody,
+	updateProduct,
+);
 productRouter.delete("/:id", deleteProduct);

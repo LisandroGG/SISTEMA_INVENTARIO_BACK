@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 import { Op } from "sequelize";
 import { messages } from "../helpers/messages.js";
 import { buildPagedResponse, getPagination } from "../helpers/pagination.js";
+import { deleteImage, uploadImage } from "../helpers/uploadImage.js";
 import {
 	validateDuplicate,
 	validateExists,
@@ -65,7 +66,8 @@ export const getProductById = async (req: Request, res: Response) => {
 };
 
 export const createProduct = async (req: Request, res: Response) => {
-	const { name, price, description, img, categoryId, quantity } = req.body;
+	const { name, price, description, categoryId, quantity } = req.body;
+	let imgUrl: string | undefined;
 	try {
 		const isDuplicate = await validateDuplicate(
 			Product,
@@ -82,12 +84,15 @@ export const createProduct = async (req: Request, res: Response) => {
 			messages.category.notFound,
 		);
 		if (!category) return;
+		if (req.file) {
+			imgUrl = await uploadImage(req.file.buffer, "productos");
+		}
 		const product = await Product.create({
 			name,
 			price,
 			description,
-			img,
 			categoryId,
+			img: imgUrl,
 		});
 		await Stock.create({
 			productId: product.getDataValue("id"),
@@ -104,7 +109,8 @@ export const createProduct = async (req: Request, res: Response) => {
 
 export const updateProduct = async (req: Request, res: Response) => {
 	const { id } = req.params;
-	const { name, price, description, img, categoryId } = req.body;
+	const { name, price, description, categoryId } = req.body;
+	let imgUrl: string | undefined;
 	try {
 		const isDuplicate = await validateDuplicate(
 			Product,
@@ -128,7 +134,14 @@ export const updateProduct = async (req: Request, res: Response) => {
 			messages.product.notFound,
 		);
 		if (!product) return;
-		await product.update({ name, price, description, img, categoryId });
+		if (req.file) {
+			const currentImg = product.getDataValue("img");
+			if (currentImg) await deleteImage(currentImg);
+			imgUrl = await uploadImage(req.file.buffer, "productos");
+		} else {
+			imgUrl = product.getDataValue("img");
+		}
+		await product.update({ name, price, description, categoryId, img: imgUrl });
 		res.json({
 			product,
 			message: messages.product.updateSuccess,
@@ -148,6 +161,8 @@ export const deleteProduct = async (req: Request, res: Response) => {
 			messages.product.notFound,
 		);
 		if (!product) return;
+		const img = product.getDataValue("img");
+		if (img) await deleteImage(img);
 		await product.destroy();
 		res.json({ message: messages.product.deleteSuccess });
 	} catch (_error) {
