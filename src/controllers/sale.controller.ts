@@ -63,6 +63,7 @@ export const getSaleById = async (req: Request, res: Response) => {
 		res.status(500).json({ message: messages.sale.getError });
 	}
 };
+
 export const createSale = async (req: Request, res: Response) => {
 	const { items } = req.body;
 	try {
@@ -92,8 +93,8 @@ export const createSale = async (req: Request, res: Response) => {
 			saleItems.push({ ...item, unitPrice });
 		}
 
-		const sale = await Sale.create({ total, status: "completed" });
-		const saleId = sale.getDataValue("id");
+		const createdSale = await Sale.create({ total, status: "completed" });
+		const saleId = createdSale.getDataValue("id");
 
 		for (const item of saleItems) {
 			await SaleItem.create({
@@ -129,9 +130,17 @@ export const createSale = async (req: Request, res: Response) => {
 			}
 		}
 
-		res
-			.status(201)
-			.json({ saleId, total, message: messages.sale.createSuccess });
+		const sale = await Sale.findByPk(saleId, {
+			include: [
+				{
+					model: SaleItem,
+					as: "items",
+					include: [{ model: Product, as: "product" }],
+				},
+			],
+		});
+
+		res.status(201).json({ sale, message: messages.sale.createSuccess });
 	} catch (_error) {
 		console.log(_error);
 		res.status(500).json({ message: messages.sale.createError });
@@ -174,7 +183,17 @@ export const cancelSale = async (req: Request, res: Response) => {
 
 		await sale.update({ status: "cancelled" });
 
-		res.json({ message: messages.sale.cancelSuccess });
+		const updatedSale = await Sale.findByPk(Number(id), {
+			include: [
+				{
+					model: SaleItem,
+					as: "items",
+					include: [{ model: Product, as: "product" }],
+				},
+			],
+		});
+
+		res.json({ sale: updatedSale, message: messages.sale.cancelSuccess });
 	} catch (_error) {
 		res.status(500).json({ message: messages.sale.cancelError });
 	}

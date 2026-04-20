@@ -12,4 +12,4 @@ export const saleRouter = Router();
 saleRouter.get("/", getAllSales);
 saleRouter.get("/:id", getSaleById);
 saleRouter.post("/", validateSaleBody, createSale);
-saleRouter.post("/cancel/:id", cancelSale);
+saleRouter.put("/cancel/:id", cancelSale);
