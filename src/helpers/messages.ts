@@ -70,4 +70,7 @@ export const messages = {
 		deleteSuccess: "Notificación eliminada exitosamente.",
 		deleteError: "Error al eliminar notificación.",
 	},
+	stockMovement: {
+		getError: "Error al obtener movimientos de stock",
+	},
 };

@@ -69,9 +69,9 @@ export const adjustStock = async (req: Request, res: Response) => {
 			});
 		}
 
-		res.json({ 
+		res.json({
 			stock,
-			message: messages.stock.adjustSuccess
+			message: messages.stock.adjustSuccess,
 		});
 	} catch (_error) {
 		res.status(500).json({ message: messages.stock.adjustError });
@@ -94,9 +94,9 @@ export const updateMinStock = async (req: Request, res: Response) => {
 
 		await stock.update({ minQuantity });
 
-		res.json({ 
+		res.json({
 			stock,
-			message: messages.stock.updateMinSuccess
+			message: messages.stock.updateMinSuccess,
 		});
 	} catch (_error) {
 		res.status(500).json({ message: messages.stock.updateMinError });

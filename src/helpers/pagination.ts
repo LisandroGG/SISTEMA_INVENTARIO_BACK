@@ -8,7 +8,7 @@ export const getPagination = (query: { page?: string }, fixedLimit = 9) => {
 
 export const buildPagedResponse = <T>(
 	rows: T[],
-	total: number,
+	totalItems: number,
 	page: number,
 	limit: number,
 ) => {
@@ -16,9 +16,9 @@ export const buildPagedResponse = <T>(
 		data: rows,
 		page,
 		limit,
-		total,
-		totalPages: Math.ceil(total / limit),
-		hasNext: page * limit < total,
+		totalItems,
+		totalPages: Math.ceil(totalItems / limit),
+		hasNext: page * limit < totalItems,
 		hasPrev: page > 1,
 	};
 };
