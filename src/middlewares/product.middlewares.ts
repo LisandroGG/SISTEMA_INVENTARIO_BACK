@@ -8,7 +8,6 @@ export const validateProductBody = (
 ) => {
 	const { name, categoryId } = req.body;
 	const price = Number(req.body.price);
-	const quantity = Number(req.body.quantity);
 
 	if (name === undefined) {
 		return res.status(400).json({ message: messages.product.nameRequired });
@@ -24,6 +23,16 @@ export const validateProductBody = (
 			.status(400)
 			.json({ message: messages.product.categoryIdRequired });
 	}
+
+	next();
+};
+
+export const validateQuantity = (
+	req: Request,
+	res: Response,
+	next: NextFunction,
+) => {
+	const quantity = Number(req.body.quantity);
 
 	if (Number.isNaN(quantity) || quantity < 0) {
 		return res.status(400).json({ message: messages.product.quantityRequired });

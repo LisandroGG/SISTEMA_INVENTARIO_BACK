@@ -1,5 +1,6 @@
 import type { Response } from "express";
 import type { Model, ModelStatic } from "sequelize";
+import { Op } from "sequelize";
 
 export const validateExists = async (
 	model: ModelStatic<Model>,
@@ -21,8 +22,15 @@ export const validateDuplicate = async (
 	value: string,
 	res: Response,
 	errorMessage: string,
+	excludeId?: number,
 ) => {
-	const duplicate = await model.findOne({ where: { [field]: value } });
+	const where: Record<string, unknown> = { [field]: value };
+
+	if (excludeId) {
+		where.id = { [Op.ne]: excludeId };
+	}
+
+	const duplicate = await model.findOne({ where });
 	if (duplicate) {
 		res.status(409).json({ message: errorMessage });
 		return true;

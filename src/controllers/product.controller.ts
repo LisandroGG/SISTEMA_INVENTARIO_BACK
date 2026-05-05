@@ -14,7 +14,7 @@ import { Stock } from "../models/stock.js";
 export const getAllProducts = async (req: Request, res: Response) => {
 	try {
 		const { name, categoryId } = req.query;
-		const { page, limit, offset } = getPagination(req.query, 9);
+		const { page, limit, offset } = getPagination(req.query, 8);
 
 		const conditions: Record<string, unknown>[] = [];
 
@@ -98,8 +98,15 @@ export const createProduct = async (req: Request, res: Response) => {
 			productId: product.getDataValue("id"),
 			quantity: quantity ?? 0,
 		});
+
+		const newProduct = await Product.findByPk(product.getDataValue("id"), {
+			include: [
+				{ model: Category, as: "category" },
+				{ model: Stock, as: "stock" },
+			],
+		});
 		res.status(201).json({
-			product,
+			product: newProduct,
 			message: messages.product.createSuccess,
 		});
 	} catch (_error) {
@@ -110,7 +117,6 @@ export const createProduct = async (req: Request, res: Response) => {
 export const updateProduct = async (req: Request, res: Response) => {
 	const { id } = req.params;
 	const { name, price, description, categoryId } = req.body;
-	let imgUrl: string | undefined;
 	try {
 		const isDuplicate = await validateDuplicate(
 			Product,
@@ -118,6 +124,7 @@ export const updateProduct = async (req: Request, res: Response) => {
 			name,
 			res,
 			messages.product.duplicateName,
+			Number(id),
 		);
 		if (isDuplicate) return;
 		const category = await validateExists(
@@ -134,16 +141,15 @@ export const updateProduct = async (req: Request, res: Response) => {
 			messages.product.notFound,
 		);
 		if (!product) return;
-		if (req.file) {
-			const currentImg = product.getDataValue("img");
-			if (currentImg) await deleteImage(currentImg);
-			imgUrl = await uploadImage(req.file.buffer, "productos");
-		} else {
-			imgUrl = product.getDataValue("img");
-		}
-		await product.update({ name, price, description, categoryId, img: imgUrl });
+		await product.update({ name, price, description, categoryId });
+		const updatedProduct = await Product.findByPk(Number(id), {
+			include: [
+				{ model: Category, as: "category" },
+				{ model: Stock, as: "stock" },
+			],
+		});
 		res.json({
-			product,
+			product: updatedProduct,
 			message: messages.product.updateSuccess,
 		});
 	} catch (_error) {

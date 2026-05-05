@@ -6,7 +6,10 @@ import {
 	getProductById,
 	updateProduct,
 } from "../controllers/product.controller.js";
-import { validateProductBody } from "../middlewares/product.middlewares.js";
+import {
+	validateProductBody,
+	validateQuantity,
+} from "../middlewares/product.middlewares.js";
 import { upload } from "../middlewares/upload.middleware.js";
 
 export const productRouter = Router();
@@ -17,6 +20,7 @@ productRouter.post(
 	"/",
 	upload.single("img"),
 	validateProductBody,
+	validateQuantity,
 	createProduct,
 );
 productRouter.put(
