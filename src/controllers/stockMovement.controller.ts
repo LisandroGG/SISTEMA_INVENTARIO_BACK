@@ -34,7 +34,7 @@ export const getAllStockMovements = async (req: Request, res: Response) => {
 
 		const { count: total, rows } = await StockMovement.findAndCountAll({
 			where: whereConditions,
-			include: [{ model: Product, as: "product" }],
+			include: [{ model: Product, as: "product", attributes: ["id", "name"] }],
 			limit,
 			offset,
 			order: [["createdAt", "DESC"]],
