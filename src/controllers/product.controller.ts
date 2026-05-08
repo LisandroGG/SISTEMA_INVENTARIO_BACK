@@ -14,7 +14,7 @@ import { Stock } from "../models/stock.js";
 export const getAllProducts = async (req: Request, res: Response) => {
 	try {
 		const { name, categoryId } = req.query;
-		const { page, limit, offset } = getPagination(req.query, 8);
+		const { page, limit, offset } = getPagination(req.query, 10);
 
 		const conditions: Record<string, unknown>[] = [];
 
