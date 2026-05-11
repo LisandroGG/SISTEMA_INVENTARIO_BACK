@@ -71,7 +71,7 @@ export const getCategoryById = async (req: Request, res: Response) => {
 };
 
 export const createCategory = async (req: Request, res: Response) => {
-	const { name, description } = req.body;
+	const { name } = req.body;
 	try {
 		const isDuplicate = await validateDuplicate(
 			Category,
@@ -81,7 +81,7 @@ export const createCategory = async (req: Request, res: Response) => {
 			messages.category.duplicateName,
 		);
 		if (isDuplicate) return;
-		const category = await Category.create({ name, description });
+		const category = await Category.create({ name });
 		res.status(201).json({
 			category,
 			message: messages.category.createSuccess,
@@ -93,7 +93,7 @@ export const createCategory = async (req: Request, res: Response) => {
 
 export const updateCategory = async (req: Request, res: Response) => {
 	const { id } = req.params;
-	const { name, description } = req.body;
+	const { name } = req.body;
 	try {
 		const isDuplicate = await validateDuplicate(
 			Category,
@@ -105,7 +105,7 @@ export const updateCategory = async (req: Request, res: Response) => {
 		if (isDuplicate) return;
 		const category = await Category.findByPk(Number(id));
 		if (category) {
-			await category.update({ name, description });
+			await category.update({ name });
 			res.json({
 				category,
 				message: messages.category.updateSuccess,

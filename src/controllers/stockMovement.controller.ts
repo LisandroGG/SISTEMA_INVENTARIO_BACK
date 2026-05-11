@@ -7,7 +7,7 @@ import { StockMovement } from "../models/stockMovement.js";
 
 export const getAllStockMovements = async (req: Request, res: Response) => {
 	try {
-		const { type, productId, dateFrom, dateTo } = req.query;
+		const { type, dateFrom, dateTo } = req.query;
 		const { page, limit, offset } = getPagination(req.query, 9);
 
 		const conditions: Record<string, unknown>[] = [];
@@ -15,19 +15,20 @@ export const getAllStockMovements = async (req: Request, res: Response) => {
 		if (type) {
 			conditions.push({ type });
 		}
-		if (productId) {
-			conditions.push({ productId: Number(productId) });
-		}
 		if (dateFrom) {
 			conditions.push({
-				createdAt: { [Op.gte]: new Date(dateFrom as string).toISOString() },
+				createdAt: { [Op.gte]: new Date(dateFrom as string) },
 			});
 		}
+
 		if (dateTo) {
 			conditions.push({
-				createdAt: { [Op.lte]: new Date(dateTo as string).toISOString() },
+				createdAt: { [Op.lte]: new Date(dateTo as string) },
 			});
 		}
+
+		console.log("dateTo:", dateTo);
+		console.log("DATE query:", dateFrom, dateTo);
 
 		const whereConditions =
 			conditions.length > 0 ? { [Op.and]: conditions } : {};
