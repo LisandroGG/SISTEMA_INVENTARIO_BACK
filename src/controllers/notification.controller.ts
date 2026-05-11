@@ -13,6 +13,17 @@ export const getAllNotifications = async (_req: Request, res: Response) => {
 	}
 };
 
+export const getUnreadNotifications = async (_req: Request, res: Response) => {
+	try {
+		const notifications = await Notification.count({
+			where: { read: false },
+		});
+		res.status(200).json(notifications);
+	} catch (_error) {
+		res.status(500).json({ message: messages.notification.getError });
+	}
+};
+
 export const markAsRead = async (req: Request, res: Response) => {
 	try {
 		const { id } = req.params;
