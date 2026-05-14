@@ -69,6 +69,13 @@ export const adjustStock = async (req: Request, res: Response) => {
 			});
 		}
 
+		await Notification.create({
+			type: "adjustment",
+			message: `Stock ajustado para el producto ${stock.getDataValue("product").id}. Motivo: ${reason}.`,
+			referenceId: stock.getDataValue("productId"),
+			referenceType: "stock",
+		});
+
 		res.json({
 			stock,
 			message: messages.stock.adjustSuccess,

@@ -10,7 +10,12 @@ export const Notification = sequelize.define(
 			primaryKey: true,
 		},
 		type: {
-			type: DataTypes.ENUM("low_stock", "sale_completed", "adjustment"),
+			type: DataTypes.ENUM(
+				"low_stock",
+				"sale_completed",
+				"adjustment",
+				"sale_canceled",
+			),
 			allowNull: false,
 		},
 		message: {

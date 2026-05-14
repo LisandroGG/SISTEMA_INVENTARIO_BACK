@@ -140,6 +140,13 @@ export const createSale = async (req: Request, res: Response) => {
 			],
 		});
 
+		await Notification.create({
+			type: "sale_completed",
+			message: `Venta #${saleId} por $${total}.`,
+			referenceId: saleId,
+			referenceType: "sale",
+		});
+
 		res.status(201).json({ sale, message: messages.sale.createSuccess });
 	} catch (_error) {
 		console.log(_error);
@@ -191,6 +198,13 @@ export const cancelSale = async (req: Request, res: Response) => {
 					include: [{ model: Product, as: "product" }],
 				},
 			],
+		});
+
+		await Notification.create({
+			type: "sale_canceled",
+			message: `Venta #${id} cancelada.`,
+			referenceId: Number(id),
+			referenceType: "sale",
 		});
 
 		res.json({ sale: updatedSale, message: messages.sale.cancelSuccess });

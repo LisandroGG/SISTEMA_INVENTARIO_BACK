@@ -1,13 +1,20 @@
 import type { Request, Response } from "express";
 import { messages } from "../helpers/messages.js";
+import { buildPagedResponse, getPagination } from "../helpers/pagination.js";
 import { Notification } from "../models/notification.js";
 
 export const getAllNotifications = async (_req: Request, res: Response) => {
 	try {
-		const notifications = await Notification.findAll({
-			order: [["read", "ASC"]],
+		const { page, limit, offset } = getPagination(_req.query, 7);
+		const { count: total, rows } = await Notification.findAndCountAll({
+			order: [
+				["read", "ASC"],
+				["createdAt", "DESC"],
+			],
+			limit,
+			offset,
 		});
-		res.status(200).json(notifications);
+		res.status(200).json(buildPagedResponse(rows, total, page, limit));
 	} catch (_error) {
 		res.status(500).json({ message: messages.notification.getError });
 	}
