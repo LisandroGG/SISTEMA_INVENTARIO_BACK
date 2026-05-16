@@ -63,7 +63,7 @@ export const adjustStock = async (req: Request, res: Response) => {
 		if (quantity <= stock.getDataValue("minQuantity")) {
 			await Notification.create({
 				type: "low_stock",
-				message: `Stock bajo para el producto ${stock.getDataValue("product").id}.`,
+				message: `Stock bajo en ${stock.getDataValue("product").name}.`,
 				referenceId: stock.getDataValue("productId"),
 				referenceType: "stock",
 			});
@@ -71,7 +71,7 @@ export const adjustStock = async (req: Request, res: Response) => {
 
 		await Notification.create({
 			type: "adjustment",
-			message: `Stock ajustado para el producto ${stock.getDataValue("product").id}. Motivo: ${reason}.`,
+			message: `Stock ajustado en ${stock.getDataValue("product").name}. Motivo: ${reason}.`,
 			referenceId: stock.getDataValue("productId"),
 			referenceType: "stock",
 		});

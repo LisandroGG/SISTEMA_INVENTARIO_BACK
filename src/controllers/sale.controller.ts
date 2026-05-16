@@ -184,7 +184,7 @@ export const cancelSale = async (req: Request, res: Response) => {
 				saleId: Number(id),
 				type: "IN",
 				quantity: item.quantity,
-				reason: "Sale cancelled",
+				reason: "Venta cancelada",
 			});
 		}
 

@@ -37,7 +37,7 @@ importers:
         version: 6.0.1
     devDependencies:
       '@biomejs/biome':
-        specifier: ^2.4.10
+        specifier: ^2.4.15
         version: 2.4.15
       '@types/cors':
         specifier: ^2.8.19
