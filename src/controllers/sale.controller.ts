@@ -13,7 +13,7 @@ import { StockMovement } from "../models/stockMovement.js";
 export const getAllSales = async (req: Request, res: Response) => {
 	try {
 		const { status } = req.query;
-		const { page, limit, offset } = getPagination(req.query, 9);
+		const { page, limit, offset } = getPagination(req.query, 7);
 
 		const conditions: Record<string, unknown>[] = [];
 
