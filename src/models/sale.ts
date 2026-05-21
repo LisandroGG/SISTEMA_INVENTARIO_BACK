@@ -9,6 +9,10 @@ export const Sale = sequelize.define(
 			autoIncrement: true,
 			primaryKey: true,
 		},
+		clientName: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
 		status: {
 			type: DataTypes.ENUM("pending", "completed", "cancelled"),
 			allowNull: false,

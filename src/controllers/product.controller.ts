@@ -47,6 +47,20 @@ export const getAllProducts = async (req: Request, res: Response) => {
 	}
 };
 
+export const getAllProductsNoPagination = async (
+	_req: Request,
+	res: Response,
+) => {
+	try {
+		const products = await Product.findAll({
+			attributes: ["id", "name"],
+		});
+		res.status(200).json(products);
+	} catch (_error) {
+		res.status(500).json({ message: messages.product.getError });
+	}
+};
+
 export const getProductById = async (req: Request, res: Response) => {
 	const { id } = req.params;
 	try {

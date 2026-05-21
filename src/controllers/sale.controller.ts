@@ -65,7 +65,7 @@ export const getSaleById = async (req: Request, res: Response) => {
 };
 
 export const createSale = async (req: Request, res: Response) => {
-	const { items } = req.body;
+	const { items, clientName } = req.body;
 	try {
 		let total = 0;
 		const saleItems = [];
@@ -90,10 +90,18 @@ export const createSale = async (req: Request, res: Response) => {
 
 			const unitPrice = product.getDataValue("price");
 			total += unitPrice * item.quantity;
-			saleItems.push({ ...item, unitPrice });
+			saleItems.push({
+				...item,
+				unitPrice,
+				productName: product.getDataValue("name"),
+			});
 		}
 
-		const createdSale = await Sale.create({ total, status: "completed" });
+		const createdSale = await Sale.create({
+			total,
+			status: "completed",
+			clientName,
+		});
 		const saleId = createdSale.getDataValue("id");
 
 		for (const item of saleItems) {
@@ -123,7 +131,7 @@ export const createSale = async (req: Request, res: Response) => {
 			if (newQuantity <= stock?.getDataValue("minQuantity")) {
 				await Notification.create({
 					type: "low_stock",
-					message: `Stock bajo para el producto ${item.productId}.`,
+					message: `Stock bajo en ${item.productName}.`,
 					referenceId: item.productId,
 					referenceType: "stock",
 				});
