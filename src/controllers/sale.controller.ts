@@ -12,7 +12,7 @@ import { StockMovement } from "../models/stockMovement.js";
 
 export const getAllSales = async (req: Request, res: Response) => {
 	try {
-		const { status } = req.query;
+		const { status, clientName } = req.query;
 		const { page, limit, offset } = getPagination(req.query, 7);
 
 		const conditions: Record<string, unknown>[] = [];
@@ -20,6 +20,11 @@ export const getAllSales = async (req: Request, res: Response) => {
 		if (status) {
 			conditions.push({
 				status: { [Op.like]: `%${status}%` },
+			});
+		}
+		if (clientName) {
+			conditions.push({
+				clientName: { [Op.like]: `%${clientName}%` },
 			});
 		}
 		const whereConditions =
