@@ -36,6 +36,7 @@ export const getAllSales = async (req: Request, res: Response) => {
 					include: [{ model: Product, as: "product" }],
 				},
 			],
+			order: [["id", "DESC"]],
 		});
 		res.status(200).json(buildPagedResponse(rows, total, page, limit));
 	} catch (_error) {
@@ -51,7 +52,13 @@ export const getSaleById = async (req: Request, res: Response) => {
 				{
 					model: SaleItem,
 					as: "items",
-					include: [{ model: Product, as: "product" }],
+					include: [
+						{
+							model: Product,
+							as: "product",
+							attributes: ["id", "name", "price"],
+						},
+					],
 				},
 			],
 		});

@@ -27,9 +27,6 @@ export const getAllStockMovements = async (req: Request, res: Response) => {
 			});
 		}
 
-		console.log("dateTo:", dateTo);
-		console.log("DATE query:", dateFrom, dateTo);
-
 		const whereConditions =
 			conditions.length > 0 ? { [Op.and]: conditions } : {};
 
