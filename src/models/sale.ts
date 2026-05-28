@@ -23,10 +23,6 @@ export const Sale = sequelize.define(
 			allowNull: false,
 			defaultValue: 0,
 		},
-		notes: {
-			type: DataTypes.STRING,
-			allowNull: true,
-		},
 	},
 	{
 		timestamps: true,

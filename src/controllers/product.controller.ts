@@ -80,7 +80,7 @@ export const getProductById = async (req: Request, res: Response) => {
 };
 
 export const createProduct = async (req: Request, res: Response) => {
-	const { name, price, description, categoryId, quantity } = req.body;
+	const { name, price, categoryId, quantity } = req.body;
 	let imgUrl: string | undefined;
 	try {
 		const isDuplicate = await validateDuplicate(
@@ -104,7 +104,6 @@ export const createProduct = async (req: Request, res: Response) => {
 		const product = await Product.create({
 			name,
 			price,
-			description,
 			categoryId,
 			img: imgUrl,
 		});
@@ -130,7 +129,7 @@ export const createProduct = async (req: Request, res: Response) => {
 
 export const updateProduct = async (req: Request, res: Response) => {
 	const { id } = req.params;
-	const { name, price, description, categoryId } = req.body;
+	const { name, price, categoryId } = req.body;
 	try {
 		const isDuplicate = await validateDuplicate(
 			Product,
@@ -155,7 +154,7 @@ export const updateProduct = async (req: Request, res: Response) => {
 			messages.product.notFound,
 		);
 		if (!product) return;
-		await product.update({ name, price, description, categoryId });
+		await product.update({ name, price, categoryId });
 		const updatedProduct = await Product.findByPk(Number(id), {
 			include: [
 				{ model: Category, as: "category" },
