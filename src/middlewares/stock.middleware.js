@@ -1,11 +1,6 @@
-import type { NextFunction, Request, Response } from "express";
 import { messages } from "../helpers/messages.js";
 
-export const validateAdjustBody = (
-	req: Request,
-	res: Response,
-	next: NextFunction,
-) => {
+export const validateAdjustBody = (req, res, next) => {
 	const { quantity, reason } = req.body;
 
 	if (quantity === undefined || typeof quantity !== "number") {
@@ -18,11 +13,7 @@ export const validateAdjustBody = (
 	next();
 };
 
-export const validateMinQuantityBody = (
-	req: Request,
-	res: Response,
-	next: NextFunction,
-) => {
+export const validateMinQuantityBody = (req, res, next) => {
 	const { minQuantity } = req.body;
 
 	if (

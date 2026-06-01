@@ -1,11 +1,6 @@
-import type { NextFunction, Request, Response } from "express";
 import { messages } from "../helpers/messages.js";
 
-export const validateCategoryBody = (
-	req: Request,
-	res: Response,
-	next: NextFunction,
-) => {
+export const validateCategoryBody = (req, res, next) => {
 	const { name } = req.body;
 
 	if (!name) {

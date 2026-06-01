@@ -1,29 +1,28 @@
-import type { Request, Response } from "express";
 import { Op } from "sequelize";
 import { messages } from "../helpers/messages.js";
 import { buildPagedResponse, getPagination } from "../helpers/pagination.js";
 import { Product } from "../models/product.js";
 import { StockMovement } from "../models/stockMovement.js";
 
-export const getAllStockMovements = async (req: Request, res: Response) => {
+export const getAllStockMovements = async (req, res) => {
 	try {
 		const { type, dateFrom, dateTo } = req.query;
 		const { page, limit, offset } = getPagination(req.query, 9);
 
-		const conditions: Record<string, unknown>[] = [];
+		const conditions = [];
 
 		if (type) {
 			conditions.push({ type });
 		}
 		if (dateFrom) {
 			conditions.push({
-				createdAt: { [Op.gte]: new Date(dateFrom as string) },
+				createdAt: { [Op.gte]: new Date(dateFrom) },
 			});
 		}
 
 		if (dateTo) {
 			conditions.push({
-				createdAt: { [Op.lte]: new Date(dateTo as string) },
+				createdAt: { [Op.lte]: new Date(dateTo) },
 			});
 		}
 

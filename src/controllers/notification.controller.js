@@ -1,9 +1,8 @@
-import type { Request, Response } from "express";
 import { messages } from "../helpers/messages.js";
 import { buildPagedResponse, getPagination } from "../helpers/pagination.js";
 import { Notification } from "../models/notification.js";
 
-export const getAllNotifications = async (_req: Request, res: Response) => {
+export const getAllNotifications = async (_req, res) => {
 	try {
 		const { page, limit, offset } = getPagination(_req.query, 7);
 		const { count: total, rows } = await Notification.findAndCountAll({
@@ -20,7 +19,7 @@ export const getAllNotifications = async (_req: Request, res: Response) => {
 	}
 };
 
-export const getUnreadNotifications = async (_req: Request, res: Response) => {
+export const getUnreadNotifications = async (_req, res) => {
 	try {
 		const notifications = await Notification.count({
 			where: { read: false },
@@ -31,7 +30,7 @@ export const getUnreadNotifications = async (_req: Request, res: Response) => {
 	}
 };
 
-export const markAsRead = async (req: Request, res: Response) => {
+export const markAsRead = async (req, res) => {
 	try {
 		const { id } = req.params;
 		const notification = await Notification.findByPk(Number(id));
@@ -45,7 +44,7 @@ export const markAsRead = async (req: Request, res: Response) => {
 	}
 };
 
-export const markAllAsRead = async (_req: Request, res: Response) => {
+export const markAllAsRead = async (_req, res) => {
 	try {
 		const notifications = await Notification.findAll({
 			where: { read: false },
@@ -61,7 +60,7 @@ export const markAllAsRead = async (_req: Request, res: Response) => {
 	}
 };
 
-export const deleteNotification = async (req: Request, res: Response) => {
+export const deleteNotification = async (req, res) => {
 	try {
 		const { id } = req.params;
 		const notification = await Notification.findByPk(Number(id));

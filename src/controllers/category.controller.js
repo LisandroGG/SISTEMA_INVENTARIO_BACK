@@ -1,16 +1,15 @@
-import type { Request, Response } from "express";
 import { literal, Op } from "sequelize";
 import { messages } from "../helpers/messages.js";
 import { buildPagedResponse, getPagination } from "../helpers/pagination.js";
 import { validateDuplicate } from "../helpers/validateExists.js";
 import { Category } from "../models/category.js";
 
-export const getAllCategories = async (req: Request, res: Response) => {
+export const getAllCategories = async (req, res) => {
 	try {
 		const { name } = req.query;
 		const { page, limit, offset } = getPagination(req.query, 9);
 
-		const conditions: Record<string, unknown>[] = [];
+		const conditions = [];
 
 		if (name) {
 			conditions.push({
@@ -29,10 +28,10 @@ export const getAllCategories = async (req: Request, res: Response) => {
 				include: [
 					[
 						literal(`(
-							SELECT COUNT(*)
-							FROM Products AS product
-							WHERE product.categoryId = Category.id
-						)`),
+                            SELECT COUNT(*)
+                            FROM Products AS product
+                            WHERE product.categoryId = Category.id
+                        )`),
 						"totalProducts",
 					],
 				],
@@ -44,10 +43,7 @@ export const getAllCategories = async (req: Request, res: Response) => {
 	}
 };
 
-export const getAllCategoriesNoPagination = async (
-	_req: Request,
-	res: Response,
-) => {
+export const getAllCategoriesNoPagination = async (_req, res) => {
 	try {
 		const categories = await Category.findAll();
 		res.status(200).json(categories);
@@ -56,7 +52,7 @@ export const getAllCategoriesNoPagination = async (
 	}
 };
 
-export const getCategoryById = async (req: Request, res: Response) => {
+export const getCategoryById = async (req, res) => {
 	const { id } = req.params;
 	try {
 		const category = await Category.findByPk(Number(id));
@@ -70,7 +66,7 @@ export const getCategoryById = async (req: Request, res: Response) => {
 	}
 };
 
-export const createCategory = async (req: Request, res: Response) => {
+export const createCategory = async (req, res) => {
 	const { name } = req.body;
 	try {
 		const isDuplicate = await validateDuplicate(
@@ -91,7 +87,7 @@ export const createCategory = async (req: Request, res: Response) => {
 	}
 };
 
-export const updateCategory = async (req: Request, res: Response) => {
+export const updateCategory = async (req, res) => {
 	const { id } = req.params;
 	const { name } = req.body;
 	try {
@@ -118,7 +114,7 @@ export const updateCategory = async (req: Request, res: Response) => {
 	}
 };
 
-export const deleteCategory = async (req: Request, res: Response) => {
+export const deleteCategory = async (req, res) => {
 	const { id } = req.params;
 	try {
 		const category = await Category.findByPk(Number(id));

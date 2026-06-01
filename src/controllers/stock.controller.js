@@ -1,11 +1,10 @@
-import type { Request, Response } from "express";
 import { messages } from "../helpers/messages.js";
 import { Notification } from "../models/notification.js";
 import { Product } from "../models/product.js";
 import { Stock } from "../models/stock.js";
 import { StockMovement } from "../models/stockMovement.js";
 
-export const getAllStocks = async (_req: Request, res: Response) => {
+export const getAllStocks = async (_req, res) => {
 	try {
 		const stocks = await Stock.findAll({
 			include: [{ model: Product, as: "product" }],
@@ -16,7 +15,7 @@ export const getAllStocks = async (_req: Request, res: Response) => {
 	}
 };
 
-export const getStockByProductId = async (req: Request, res: Response) => {
+export const getStockByProductId = async (req, res) => {
 	try {
 		const { id } = req.params;
 		const stock = await Stock.findOne({
@@ -32,7 +31,7 @@ export const getStockByProductId = async (req: Request, res: Response) => {
 	}
 };
 
-export const adjustStock = async (req: Request, res: Response) => {
+export const adjustStock = async (req, res) => {
 	try {
 		const { id } = req.params;
 		const { quantity, reason } = req.body;
@@ -85,7 +84,7 @@ export const adjustStock = async (req: Request, res: Response) => {
 	}
 };
 
-export const updateMinStock = async (req: Request, res: Response) => {
+export const updateMinStock = async (req, res) => {
 	try {
 		const { id } = req.params;
 		const { minQuantity } = req.body;

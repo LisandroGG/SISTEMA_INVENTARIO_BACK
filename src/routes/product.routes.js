@@ -10,7 +10,7 @@ import {
 import {
 	validateProductBody,
 	validateQuantity,
-} from "../middlewares/product.middlewares.js";
+} from "../middlewares/product.middleware.js";
 import { upload } from "../middlewares/upload.middleware.js";
 
 export const productRouter = Router();
@@ -25,10 +25,5 @@ productRouter.post(
 	validateQuantity,
 	createProduct,
 );
-productRouter.put(
-	"/:id",
-	upload.single("img"),
-	validateProductBody,
-	updateProduct,
-);
+productRouter.put("/:id", validateProductBody, updateProduct);
 productRouter.delete("/:id", deleteProduct);

@@ -1,11 +1,6 @@
-import type { NextFunction, Request, Response } from "express";
 import { messages } from "../helpers/messages.js";
 
-export const validateProductBody = (
-	req: Request,
-	res: Response,
-	next: NextFunction,
-) => {
+export const validateProductBody = (req, res, next) => {
 	const { name, categoryId } = req.body;
 	const price = Number(req.body.price);
 
@@ -27,11 +22,7 @@ export const validateProductBody = (
 	next();
 };
 
-export const validateQuantity = (
-	req: Request,
-	res: Response,
-	next: NextFunction,
-) => {
+export const validateQuantity = (req, res, next) => {
 	const quantity = Number(req.body.quantity);
 
 	if (Number.isNaN(quantity) || quantity < 0) {

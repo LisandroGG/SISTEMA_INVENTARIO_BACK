@@ -1,4 +1,3 @@
-import type { Request, Response } from "express";
 import { Op } from "sequelize";
 import { sequelize } from "../config/database.js";
 import { Category } from "../models/category.js";
@@ -8,7 +7,7 @@ import { SaleItem } from "../models/saleItem.js";
 import { Stock } from "../models/stock.js";
 import { StockMovement } from "../models/stockMovement.js";
 
-export const getDashboardStats = async (_req: Request, res: Response) => {
+export const getDashboardStats = async (_req, res) => {
 	try {
 		const [
 			totalProducts,

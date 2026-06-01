@@ -43,3 +43,6 @@ Thumbs.db
 .wwebjs_cache/
 session/
 .wwebjs_auth/
+
+# Images
+/images 

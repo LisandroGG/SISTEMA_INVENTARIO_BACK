@@ -1,8 +1,7 @@
-import type { Request, Response } from "express";
 import { Op } from "sequelize";
+import { deleteImage, uploadImage } from "../helpers/imageHelper.js";
 import { messages } from "../helpers/messages.js";
 import { buildPagedResponse, getPagination } from "../helpers/pagination.js";
-import { deleteImage, uploadImage } from "../helpers/uploadImage.js";
 import {
 	validateDuplicate,
 	validateExists,
@@ -11,12 +10,12 @@ import { Category } from "../models/category.js";
 import { Product } from "../models/product.js";
 import { Stock } from "../models/stock.js";
 
-export const getAllProducts = async (req: Request, res: Response) => {
+export const getAllProducts = async (req, res) => {
 	try {
 		const { name, categoryId } = req.query;
 		const { page, limit, offset } = getPagination(req.query, 10);
 
-		const conditions: Record<string, unknown>[] = [];
+		const conditions = [];
 
 		if (name) {
 			conditions.push({
@@ -47,10 +46,7 @@ export const getAllProducts = async (req: Request, res: Response) => {
 	}
 };
 
-export const getAllProductsNoPagination = async (
-	_req: Request,
-	res: Response,
-) => {
+export const getAllProductsNoPagination = async (_req, res) => {
 	try {
 		const products = await Product.findAll({
 			attributes: ["id", "name"],
@@ -61,7 +57,7 @@ export const getAllProductsNoPagination = async (
 	}
 };
 
-export const getProductById = async (req: Request, res: Response) => {
+export const getProductById = async (req, res) => {
 	const { id } = req.params;
 	try {
 		const product = await Product.findByPk(Number(id), {
@@ -79,9 +75,9 @@ export const getProductById = async (req: Request, res: Response) => {
 	}
 };
 
-export const createProduct = async (req: Request, res: Response) => {
+export const createProduct = async (req, res) => {
 	const { name, price, categoryId, quantity } = req.body;
-	let imgUrl: string | undefined;
+	let imgUrl;
 	try {
 		const isDuplicate = await validateDuplicate(
 			Product,
@@ -99,7 +95,7 @@ export const createProduct = async (req: Request, res: Response) => {
 		);
 		if (!category) return;
 		if (req.file) {
-			imgUrl = await uploadImage(req.file.buffer, "productos");
+			imgUrl = await uploadImage(req.file.buffer, req.file.mimetype);
 		}
 		const product = await Product.create({
 			name,
@@ -127,7 +123,7 @@ export const createProduct = async (req: Request, res: Response) => {
 	}
 };
 
-export const updateProduct = async (req: Request, res: Response) => {
+export const updateProduct = async (req, res) => {
 	const { id } = req.params;
 	const { name, price, categoryId } = req.body;
 	try {
@@ -170,7 +166,7 @@ export const updateProduct = async (req: Request, res: Response) => {
 	}
 };
 
-export const deleteProduct = async (req: Request, res: Response) => {
+export const deleteProduct = async (req, res) => {
 	const { id } = req.params;
 	try {
 		const product = await validateExists(

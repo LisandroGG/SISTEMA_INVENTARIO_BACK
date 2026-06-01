@@ -1,4 +1,3 @@
-import type { Request, Response } from "express";
 import { Op } from "sequelize";
 import { messages } from "../helpers/messages.js";
 import { buildPagedResponse, getPagination } from "../helpers/pagination.js";
@@ -10,12 +9,12 @@ import { SaleItem } from "../models/saleItem.js";
 import { Stock } from "../models/stock.js";
 import { StockMovement } from "../models/stockMovement.js";
 
-export const getAllSales = async (req: Request, res: Response) => {
+export const getAllSales = async (req, res) => {
 	try {
 		const { status, clientName } = req.query;
 		const { page, limit, offset } = getPagination(req.query, 7);
 
-		const conditions: Record<string, unknown>[] = [];
+		const conditions = [];
 
 		if (status) {
 			conditions.push({
@@ -49,7 +48,7 @@ export const getAllSales = async (req: Request, res: Response) => {
 	}
 };
 
-export const getSaleById = async (req: Request, res: Response) => {
+export const getSaleById = async (req, res) => {
 	try {
 		const { id } = req.params;
 		const sale = await Sale.findByPk(Number(id), {
@@ -76,7 +75,7 @@ export const getSaleById = async (req: Request, res: Response) => {
 	}
 };
 
-export const createSale = async (req: Request, res: Response) => {
+export const createSale = async (req, res) => {
 	const { items, clientName } = req.body;
 	try {
 		let total = 0;
@@ -174,7 +173,7 @@ export const createSale = async (req: Request, res: Response) => {
 	}
 };
 
-export const cancelSale = async (req: Request, res: Response) => {
+export const cancelSale = async (req, res) => {
 	const { id } = req.params;
 	try {
 		const sale = await Sale.findByPk(Number(id), {

@@ -1,11 +1,6 @@
-import type { NextFunction, Request, Response } from "express";
 import { messages } from "../helpers/messages.js";
 
-export const validateSaleBody = (
-	req: Request,
-	res: Response,
-	next: NextFunction,
-) => {
+export const validateSaleBody = (req, res, next) => {
 	const { items } = req.body;
 
 	if (!items || !Array.isArray(items) || items.length === 0) {
